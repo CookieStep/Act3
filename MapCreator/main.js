@@ -13,7 +13,7 @@ function drw(x, y, color, bgColor) {
 function selected(x = 0, y = 0) {
     switch (y) {
         case 0:
-            game.selected == "a" ? drw(x, y, "black", "lime") : drw(x, y, "black", "darkgreen")
+            game.selected == "b" ? drw(x, y, "black", "lime") : drw(x, y, "black", "darkgreen")
             break;
         case 1:
             game.selected == "p" ? drw(x, y, "black", "aqua ") : drw(x, y, "black", "darkblue")
@@ -71,7 +71,7 @@ let game = {
     floor: [1],
     tile: [],
     player: { x: -1, y: -1 },
-    selected: "a",
+    selected: "b",
     hold : false,
     left : 0
 }
@@ -107,7 +107,7 @@ function mouseClick(e) {
     let x = Math.floor(e.x / scale) - 1 + screen.left
     let y = Math.floor((draw.height - e.y) / scale)
     if(x >= 0) {
-        if(game.selected == "a") {
+        if(game.selected == "b") {
             if(game.player.x == x)
                 game.player.y += y - game.floor[x] + 1
             for (let tile of game.tile) {
@@ -150,6 +150,21 @@ function rightClick(e) {
         event.preventDefault();
     if (event.stopPropagation != undefined)
         event.stopPropagation();
+}
+function getMap(){
+    string = ""
+    for(x in game.floor){
+        let length = game.floor[x];
+        let tiles = game.tile;
+        let player = game.player;
+        for(y = 0; y < length; y++){
+            string += "b"
+        }
+        if(player.x == x)
+            string += `${' '.repeat(player.y - length)}P`
+        string+="\n"
+    }
+    return string;
 }
 addEventListener("keydown", keyPress)
 addEventListener("keyup", keyUp)
