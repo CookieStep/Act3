@@ -30,7 +30,7 @@ let draw = {
         return `rgba(${color.red}, ${color.green}, ${color.blue}, ${alpha})`
     },
     //Scale the screen
-    scale : (num=0, up=true) => (num * (scale ? scale : 1) + (up ? 0.2 : 0)),
+    scale : (num=0, up=true) => (num * (scale ? scale : 1) + (up ? 1 : 0)),
     //Attach draw to the canvas
     attach(id) {
         let element = document.getElementById(id)

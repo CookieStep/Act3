@@ -28,7 +28,7 @@ function update() {
     //Clear the screen
     draw.clear()
         //Draw the grid
-    for (let x = 0; x < game.floor.length + 1; x++) {
+    for (let x = 0; x <= game.floor.length; x++) {
         for (let y = 0; y < draw.height / scale; y++) {
             if (x == 0) {
                 selected(x, y)
@@ -38,7 +38,7 @@ function update() {
             draw.box(x + 0.1, y + 0.1, 0.8, 0.8, { flip: true, color: "white" })
         }
     }
-    //
+    // Get the player position
     {
         let player = game.player
         draw.box(player.x - screen.left + 1, player.y, 1, 1, { color: "blue", flip: true })
@@ -72,8 +72,8 @@ let game = {
     tile: [],
     player: { x: -1, y: -1 },
     selected: "a",
-    hold : false,
-    left : 0
+    hold: false,
+    left: 0
 }
 let screen = {
     left: 0,
@@ -81,70 +81,91 @@ let screen = {
     get width() { return draw.width / scale },
     get height() { return draw.height / scale }
 }
+
 function keyPress(e) {
-    switch(e.key) {
-        case "Shift" :
+    switch (e.key) {
+        case "Shift":
             game.hold = true
-        break;
+            break;
         case "ArrowRight":
             screen.left++
-        break;
+                break;
         case "ArrowLeft":
             screen.left--
-        break;
+                break;
         default:
             game.selected = e.key
     }
 }
+
 function keyUp(e) {
-    switch(e.key) {
-        case "Shift" :
+    switch (e.key) {
+        case "Shift":
             game.hold = false
-        break;
+            break;
     }
 }
+
 function mouseClick(e) {
     let x = Math.floor(e.x / scale) - 1 + screen.left
     let y = Math.floor((draw.height - e.y) / scale)
-    if(x >= 0) {
-        if(game.selected == "a") {
-            if(game.player.x == x)
+    if (x >= 0) {
+        if (game.selected == "a") {
+            if (game.player.x == x)
                 game.player.y += y - game.floor[x] + 1
             for (let tile of game.tile) {
-                if(tile.x == x)
+                if (tile.x == x)
                     tile.y += y - game.floor[x] + 1
             }
             game.floor[x] = y + 1
-        }else{
+        } else {
             let found = false
-            if(game.player.x == x && game.player.y == y) {
-                game.player = {x : -1, y : -1}
+            if (game.player.x == x && game.player.y == y) {
+                game.player = { x: -1, y: -1 }
                 found = "p" == game.selected
             }
             game.tile = game.tile.filter((value) => {
-                if((value.x == x && value.y == y) && value.type == game.selected) {found = true}
+                if ((value.x == x && value.y == y) && value.type == game.selected) { found = true }
                 return value.x != x || value.y != y
             })
-            if(!found) {
-                switch(game.selected) {
-                    case "p" :
-                        game.player = {x, y}
-                    break;
-                    default :
-                        game.tile.push({x, y, type : game.selected})
-                    break;
+            if (!found) {
+                switch (game.selected) {
+                    case "p":
+                        game.player = { x, y }
+                        break;
+                    default:
+                        game.tile.push({ x, y, type: game.selected })
+                        break;
                 }
             }
         }
-    }else{
+    } else {
 
     }
 }
 let v = 1
+
 function rand(s, s2) {
     let x = Math.cos(s) * Math.sin(s2) * v
     return x - Math.floor(x)
 }
+
+function getMap(){
+    string = ""
+    for(x in game.floor){
+        let length = game.floor[x];
+        let tiles = game.tile;
+        let player = game.player;
+        for(y = 0; y < length; y++){
+            string += "b"
+        }
+        if(player.x == x)
+            string += `${' '.repeat(player.y - length)}P`
+        string+="\n"
+    }
+    return string;
+}
+
 function rightClick(e) {
     if (event.preventDefault != undefined)
         event.preventDefault();
@@ -155,5 +176,5 @@ addEventListener("keydown", keyPress)
 addEventListener("keyup", keyUp)
 addEventListener("load", start)
 addEventListener("mousedown", mouseClick)
-addEventListener("mousemove", function(e) {if(game.hold) mouseClick(e)})
+addEventListener("mousemove", function(e) { if (game.hold) mouseClick(e) })
 addEventListener("contextmenu", rightClick)
